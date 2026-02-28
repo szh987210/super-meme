@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="赛博菩提 - 冥想指导、佛经诵读、每日一偈、佛学知识">
+    <title>赛博菩提 · 静心明性</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+        }
+
+        h1 {
+            font-size: 3em;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #ffd700);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            letter-spacing: 2px;
+        }
+
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .menu-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            border-color: #ffd700;
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-card:hover::before {
+            opacity: 1;
+        }
+
+        .menu-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .menu-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .menu-card p {
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            font-size: 2em;
+            color: #ffd700;
+        }
+
+        .back-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+
+        /* 冥想计时器样式 */
+        .meditation-timer {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .timer-display {
+            font-size: 5em;
+            color: #ffd700;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .timer-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timer-btn.start {
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        .timer-btn.pause {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border: 1px solid #ffd700;
+        }
+
+        .timer-btn.reset {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+
+        .timer-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .meditation-duration {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .duration-option {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .duration-option:hover, .duration-option.active {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+        }
+
+        .meditation-tip {
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+            margin-top: 30px;
+            color: #a0a0a0;
+            line-height: 1.8;
+        }
+
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
+            margin: 30px auto;
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        /* 佛经诵读样式 */
+        .sutra-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .sutra-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sutra-card:hover {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .sutra-card h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .sutra-card p {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .sutra-content {
+            display: none;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .sutra-content.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .sutra-text {
+            color: #fff;
+            line-height: 2;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .sutra-text p {
+            margin-bottom: 20px;
+        }
+
+        .sutra-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* 每日一偈样式 */
+        .daily-verse {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .verse-card {
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verse-icon {
+            font-size: 6em;
+            opacity: 0.2;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .verse-text {
+            font-size: 1.8em;
+            color: #ffd700;
+            line-height: 2;
+            margin: 40px 0;
+            font-weight: bold;
+        }
+
+        .verse-source {
+            color: #a0a0a0;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .verse-explanation {
+            color: #fff;
+            line-height: 1.8;
+            margin-top: 30px;
+            text-align: left;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .verse-explanation h4 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .refresh-verse-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-verse-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        /* 佛学知识样式 */
+        .buddha-knowledge {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .knowledge-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .knowledge-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-5px);
+        }
+
+        .knowledge-card h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .knowledge-content {
+            color: #a0a0a0;
+            line-height: 1.8;
+        }
+
+        .knowledge-content p {
+            margin-bottom: 15px;
+        }
+
+        .knowledge-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .knowledge-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            color: #a0a0a0;
+        }
+
+        .knowledge-list li:last-child {
+            border-bottom: none;
+        }
+
+        .knowledge-list li::before {
+            content: '🪷 ';
+            margin-right: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
+            .timer-display {
+                font-size: 3em;
+            }
+            
+            .verse-text {
+                font-size: 1.3em;
+            }
+            
+            .breathing-circle {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🪷 赛博菩提 · 静心明性 🪷</h1>
+            <p class="subtitle">禅修 · 诵经 · 悟道</p>
+        </header>
+
+        <!-- 主菜单 -->
+        <div class="main-menu" id="mainMenu">
+            <div class="menu-card" onclick="showSection('meditation')">
+                <div class="menu-icon">🧘</div>
+                <h3>冥想引导</h3>
+                <p>正念冥想 · 呼吸练习 · 静心禅修</p>
+            </div>
+            <div class="menu-card" onclick="showSection('sutra')">
+                <div class="menu-icon">📿</div>
+                <h3>佛经诵读</h3>
+                <p>心经 · 金刚经 · 楞严经</p>
+            </div>
+            <div class="menu-card" onclick="showSection('verse')">
+                <div class="menu-icon">📜</div>
+                <h3>每日一偈</h3>
+                <p>佛家智慧 · 每日禅语</p>
+            </div>
+            <div class="menu-card" onclick="showSection('knowledge')">
+                <div class="menu-icon">📚</div>
+                <h3>佛学知识</h3>
+                <p>佛法教义 · 禅宗公案</p>
+            </div>
+        </div>
+
+        <!-- 冥想引导部分 -->
+        <div class="content-section" id="meditationSection">
+            <div class="section-header">
+                <h2>🧘 冥想引导</h2>
+                <button class="back-btn" onclick="backToMenu()">返回菜单</button>
+            </div>
+            
+            <div class="meditation-timer">
+                <h3 style="color: #ffd700; margin-bottom: 20px;">选择冥想时长</h3>
+                
+                <div class="meditation-duration">
+                    <div class="duration-option" data-time="3">3分钟</div>
+                    <div class="duration-option" data-time="5">5分钟</div>
+                    <div class="duration-option" data-time="10">10分钟</div>
+                    <div class="duration-option" data-time="15">15分钟</div>
+                    <div class="duration-option" data-time="20">20分钟</div>
+                    <div class="duration-option" data-time="30">30分钟</div>
+                </div>
+
+                <div class="breathing-circle" id="breathingCircle"></div>
+                
+                <div class="timer-display" id="timerDisplay">05:00</div>
+                
+                <div class="timer-controls">
+                    <button class="timer-btn start" onclick="startTimer()">开始</button>
+                    <button class="timer-btn pause" onclick="pauseTimer()">暂停</button>
+                    <button class="timer-btn reset" onclick="resetTimer()">重置</button>
+                </div>
+
+                <div class="meditation-tip">
+                    <h4 style="color: #ffd700; margin-bottom: 15px;">💡 冥想提示</h4>
+                    <p id="meditationTip">找一个安静的地方坐好,闭上眼睛,专注于呼吸。吸气时感受空气进入身体,呼气时放松全身。不要强求任何状态,让思绪自然流动,只是观察它们。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 佛经诵读部分 -->
+        <div class="content-section" id="sutraSection">
+            <div class="section-header">
+                <h2>📿 佛经诵读</h2>
+                <button class="back-btn" onclick="backToMenu()">返回菜单</button>
+            </div>
+            
+            <div class="sutra-list">
+                <div class="sutra-card" onclick="showSutra('heart')">
+                    <h3>心经</h3>
+                    <p>般若波罗蜜多心经</p>
+                    <p style="color: #ffd700; margin-top: 10px;">📖 260字 · 最流行的佛经</p>
+                </div>
+                <div class="sutra-card" onclick="showSutra('diamond')">
+                    <h3>金刚经</h3>
+                    <p>能断金刚般若波罗蜜经</p>
+                    <p style="color: #ffd700; margin-top: 10px;">📖 智慧的宝库</p>
+                </div>
+                <div class="sutra-card" onclick="showSutra('sanghata')">
+                    <h3>楞严咒</h3>
+                    <p>大佛顶首楞严咒</p>
+                    <p style="color: #ffd700; margin-top: 10px;">📖 最长咒语</p>
+                </div>
+            </div>
+
+            <div class="sutra-content" id="sutraContent">
+                <!-- 佛经内容将通过JS动态加载 -->
+            </div>
+        </div>
+
+        <!-- 每日一偈部分 -->
+        <div class="content-section" id="verseSection">
+            <div class="section-header">
+                <h2>📜 每日一偈</h2>
+                <button class="back-btn" onclick="backToMenu()">返回菜单</button>
+            </div>
+            
+            <div class="daily-verse">
+                <div class="verse-card">
+                    <div class="verse-icon">🪷</div>
+                    <div class="verse-text" id="verseText">
+                        菩提本无树,明镜亦非台。<br>
+                        本来无一物,何处惹尘埃。
+                    </div>
+                    <div class="verse-source" id="verseSource">—— 惠能大师</div>
+                </div>
+                
+                <div class="verse-explanation">
+                    <h4>💭 偈语解读</h4>
+                    <p id="verseExplanation">
+                        这是六祖惠能的著名偈语,表达了禅宗的核心思想——空性。意思是说,觉悟(菩提)本来就不是一棵树,明亮的心镜也不是台座。本来就没有什么实体的存在,又哪里会染上尘埃呢?
+                    </p>
+                </div>
+                
+                <button class="refresh-verse-btn" onclick="getNewVerse()">✨ 换一偈</button>
+            </div>
+        </div>
+
+        <!-- 佛学知识部分 -->
+        <div class="content-section" id="knowledgeSection">
+            <div class="section-header">
+                <h2>📚 佛学知识</h2>
+                <button class="back-btn" onclick="backToMenu()">返回菜单</button>
+            </div>
+            
+            <div class="buddha-knowledge">
+                <div class="knowledge-card">
+                    <h3>🪷 四圣谛</h3>
+                    <div class="knowledge-content">
+                        <p>佛教的核心教义,揭示了人生的真理:</p>
+                        <ul class="knowledge-list">
+                            <li><strong>苦谛:</strong> 人生皆苦,生老病死皆是苦</li>
+                            <li><strong>集谛:</strong> 苦的根源在于贪嗔痴</li>
+                            <li><strong>灭谛:</strong> 消除苦因,可达涅槃</li>
+                            <li><strong>道谛:</strong> 通过八正道修行解脱</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card">
+                    <h3>🌸 八正道</h3>
+                    <div class="knowledge-content">
+                        <p>修行的八个正确路径:</p>
+                        <ul class="knowledge-list">
+                            <li>正见 - 正确的理解</li>
+                            <li>正思 - 正确的思考</li>
+                            <li>正语 - 正确的言语</li>
+                            <li>正业 - 正确的行为</li>
+                            <li>正命 - 正确的生活</li>
+                            <li>正精进 - 正确的努力</li>
+                            <li>正念 - 正确的觉察</li>
+                            <li>正定 - 正确的专注</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card">
+                    <h3>🧘 三学</h3>
+                    <div class="knowledge-content">
+                        <p>修行的三个基本方面:</p>
+                        <ul class="knowledge-list">
+                            <li><strong>戒学:</strong> 遵守戒律,不做恶业</li>
+                            <li><strong>定学:</strong> 修习禅定,安定身心</li>
+                            <li><strong>慧学:</strong> 开发智慧,洞察真理</li>
+                        </ul>
+                        <p style="margin-top: 15px;">三者相辅相成,缺一不可。</p>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card">
+                    <h3>🌿 六度波罗蜜</h3>
+                    <div class="knowledge-content">
+                        <p>菩萨修行的六个方面:</p>
+                        <ul class="knowledge-list">
+                            <li>布施 - 舍己为人</li>
+                            <li>持戒 - 遵守戒律</li>
+                            <li>忍辱 - 宽容忍耐</li>
+                            <li>精进 - 勤奋修行</li>
+                            <li>禅定 - 心如止水</li>
+                            <li>智慧 - 洞察真相</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card">
+                    <h3>⚡ 因果报应</h3>
+                    <div class="knowledge-content">
+                        <p>因果律是宇宙的基本法则:</p>
+                        <p><strong>善有善报,恶有恶报</strong></p>
+                        <ul class="knowledge-list">
+                            <li>身口意所造业,必有果报</li>
+                            <li>业力决定下一世的生命形态</li>
+                            <li>通过修行可以改变业力</li>
+                            <li>断恶修善,趋向解脱</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="knowledge-card">
+                    <h3>🪷 三宝</h3>
+                    <div class="knowledge-content">
+                        <p>佛教信仰的核心对象:</p>
+                        <ul class="knowledge-list">
+                            <li><strong>佛宝:</strong> 觉悟者,导师</li>
+                            <li><strong>法宝:</strong> 佛法教义,修行指南</li>
+                            <li><strong>僧宝:</strong> 修行僧团,传承佛法</li>
+                        </ul>
+                        <p style="margin-top: 15px;">皈依三宝是成为佛教徒的基础。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let timerInterval = null;
+        let totalSeconds = 300; // 默认5分钟
+        let remainingSeconds = 300;
+        let isRunning = false;
+
+        // 冥想提示语
+        const meditationTips = [
+            "找一个安静的地方坐好,闭上眼睛,专注于呼吸。吸气时感受空气进入身体,呼气时放松全身。不要强求任何状态,让思绪自然流动,只是观察它们。",
+            "身体坐直,双手放在膝盖上。感受自己的呼吸,每次呼吸都是一个完整的循环。如果思绪飘走,温柔地把它带回来。这就是正念冥想。",
+            "就像观察天空中的云朵一样,观察你的思绪。不要评判它们,只是看着它们来来去去。保持这样的觉察,让心灵平静下来。",
+            "在冥想中,时间并不重要。重要的是你是否真正活在当下。感受此刻的呼吸,感受此刻的存在,这就是修行的真谛。",
+            "呼吸是生命的桥梁。在呼与吸之间,有片刻的静止。在每次呼吸后稍作停顿,感受那份宁静和平安。"
+        ];
+
+        // 佛经数据
+        const sutras = {
+            heart: {
+                title: "般若波罗蜜多心经",
+                content: `
+                    <div class="sutra-text">
+                        <p>观自在菩萨,行深般若波罗蜜多时,照见五蕴皆空,度一切苦厄。</p>
+                        <p>舍利子,色不异空,空不异色,色即是空,空即是色,受想行识,亦复如是。</p>
+                        <p>舍利子,是诸法空相,不生不灭,不垢不净,不增不减。</p>
+                        <p>是故空中无色,无受想行识,无眼耳鼻舌身意,无色声香味触法,无眼界,乃至无意识界。</p>
+                        <p>无无明,亦无无明尽,乃至无老死,亦无老死尽。</p>
+                        <p>无苦集灭道,无智亦无得。</p>
+                        <p>以无所得故,菩提萨埵,依般若波罗蜜多故,心无挂碍,无挂碍故,无有恐怖,远离颠倒梦想,究竟涅槃。</p>
+                        <p>三世诸佛,依般若波罗蜜多故,得阿耨多罗三藐三菩提。</p>
+                        <p>故知般若波罗蜜多,是大神咒,是大明咒,是无上咒,是无等等咒,能除一切苦,真实不虚。</p>
+                        <p>故说般若波罗蜜多咒,即说咒曰:</p>
+                        <p style="font-size: 1.3em; color: #ffd700; margin: 30px 0;">揭谛揭谛,波罗揭谛,波罗僧揭谛,菩提萨婆诃。</p>
+                    </div>
+                `
+            },
+            diamond: {
+                title: "金刚经(节选)",
+                content: `
+                    <div class="sutra-text">
+                        <p>如是我闻,一时佛在舍卫国祇树给孤独园,与大比丘众千二百五十人俱。</p>
+                        <p>尔时世尊食时,著衣持钵,入舍卫大城乞食。于其城中次第乞已,还至本处。饭食讫,收衣钵,洗足已,敷座而坐。</p>
+                        <p>尔时须菩提在大众中,即从座起,偏袒右肩,右膝著地,合掌恭敬,而白佛言:</p>
+                        <p style="color: #ffd700; margin: 20px 0;">"希有世尊,如来善护念诸菩萨,善付嘱诸菩萨。世尊,善男子、善女人,发阿耨多罗三藐三菩提心,应云何住,云何降伏其心?"</p>
+                        <p>佛言:"善哉,善哉!须菩提,如汝所说,如来善护念诸菩萨,善付嘱诸菩萨。汝今谛听,当为汝说。善男子、善女人,发阿耨多罗三藐三菩提心,应如是住,如是降伏其心。"</p>
+                        <p style="color: #ffd700; margin: 30px 0;">"诸菩萨摩诃萨,应如是生清净心:不应住色生心,不应住声香味触法生心,应无所住而生其心。"</p>
+                        <p>"凡所有相,皆是虚妄。若见诸相非相,即见如来。"</p>
+                        <p>"一切有为法,如梦幻泡影,如露亦如电,应作如是观。"</p>
+                    </div>
+                `
+            },
+            sanghata: {
+                title: "大佛顶首楞严咒(节选)",
+                content: `
+                    <div class="sutra-text">
+                        <p style="color: #ffd700; margin-bottom: 30px;">楞严咒是佛教中最长的咒语,具有强大的加持力。</p>
+                        <p>南无楞严会上佛菩萨</p>
+                        <p>南无释迦牟尼佛</p>
+                        <p>南无金刚藏王菩萨</p>
+                        <p>南无大佛顶首楞严咒</p>
+                        <p style="margin-top: 30px; color: #a0a0a0;">(注:楞严咒全文非常长,此处仅列出开头部分。建议在专业导师指导下完整诵读。)</p>
+                    </div>
+                `
+            }
+        };
+
+        // 每日一偈数据
+        const verses = [
+            {
+                text: "菩提本无树,明镜亦非台。<br>本来无一物,何处惹尘埃。",
+                source: "惠能大师",
+                explanation: "这是六祖惠能的著名偈语,表达了禅宗的核心思想——空性。意思是说,觉悟(菩提)本来就不是一棵树,明亮的心镜也不是台座。本来就没有什么实体的存在,又哪里会染上尘埃呢?"
+            },
+            {
+                text: "身是菩提树,心如明镜台。<br>时时勤拂拭,勿使惹尘埃。",
+                source: "神秀大师",
+                explanation: "这是神秀的偈语,代表了渐修的思想。身体就像菩提树,心灵就像明镜台。需要时时勤加拂拭,不要让它染上尘埃。这与惠能的顿悟思想形成对比。"
+            },
+            {
+                text: "一花一世界,一叶一菩提。<br>一沙一极乐,一笑一尘缘。",
+                source: "佛经",
+                explanation: "这首偈语表达了佛教的整体观和微观视角。每一朵花里都有一个世界,每一片叶子都蕴含着觉悟的智慧。万物皆有佛性,一沙一世界,一花一天堂。"
+            },
+            {
+                text: "本来无一物,何处惹尘埃。<br>若能明此理,即见自如来。",
+                source: "佛经",
+                explanation: "如果能明白'本来无一物'的道理,就能见到自己的佛性。一切烦恼和执着都是虚幻的,认识到这一点,就是真正的觉悟。"
+            },
+            {
+                text: "放下屠刀,立地成佛。<br>回头是岸,当下解脱。",
+                source: "佛教谚语",
+                explanation: "这是佛教中关于改过自新的著名谚语。即使犯过错误,只要真心悔改,放下恶念,立刻就能走上觉悟的道路。慈悲为怀,改过自新,任何时候都不晚。"
+            },
+            {
+                text: "色即是空,空即是色。<br>受想行识,亦复如是。",
+                source: "心经",
+                explanation: "这是《心经》的核心语句,阐述了色与空的不二关系。物质世界(色)和空性本质是一体的,不可分割。同样,受、想、行、识也都是如此。"
+            },
+            {
+                text: "一切有为法,如梦幻泡影。<br>如露亦如电,应作如是观。",
+                source: "金刚经",
+                explanation: "这是《金刚经》中著名的偈语,说明了世间万法的无常性。一切因缘所生的法,都像梦、幻、泡、影一样虚幻;又像露水、闪电一样短暂。应该这样去观察世间。"
+            },
+            {
+                text: "放下万缘,心无挂碍。<br>清净自在,当下涅槃。",
+                source: "禅宗",
+                explanation: "放下一切世俗的牵挂和执着,内心就没有障碍。达到清净自在的境界,就在当下就能证得涅槃。修行不在远方,就在当下一念。"
+            }
+        ];
+
+        // 显示内容区域
+        function showSection(section) {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.querySelectorAll('.content-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            const sectionId = section + 'Section';
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // 返回菜单
+        function backToMenu() {
+            document.querySelectorAll('.content-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            document.getElementById('mainMenu').style.display = 'grid';
+        }
+
+        // 冥想计时器功能
+        const durationOptions = document.querySelectorAll('.duration-option');
+        durationOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                durationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                const minutes = parseInt(this.dataset.time);
+                totalSeconds = minutes * 60;
+                remainingSeconds = totalSeconds;
+                updateTimerDisplay();
+                
+                // 更新提示语
+                const tipIndex = Math.floor(Math.random() * meditationTips.length);
+                document.getElementById('meditationTip').textContent = meditationTips[tipIndex];
+            });
+        });
+
+        // 默认选择5分钟
+        durationOptions[1].classList.add('active');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            timerInterval = setInterval(() => {
+                remainingSeconds--;
+                updateTimerDisplay();
+                
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    alert('🧘 冥想时间结束!愿您内心平静,智慧增长。');
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            remainingSeconds = totalSeconds;
+            updateTimerDisplay();
+        }
+
+        // 佛经诵读功能
+        function showSutra(sutraId) {
+            const sutra = sutras[sutraId];
+            const content = document.getElementById('sutraContent');
+            content.innerHTML = `
+                <h3 style="color: #ffd700; text-align: center; margin-bottom: 30px;">${sutra.title}</h3>
+                ${sutra.content}
+                <div class="sutra-controls">
+                    <button class="refresh-verse-btn" onclick="document.getElementById('sutraContent').classList.remove('show')">关闭</button>
+                </div>
+            `;
+            content.classList.add('show');
+            content.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 每日一偈功能
+        let currentVerseIndex = 0;
+
+        function getNewVerse() {
+            currentVerseIndex = (currentVerseIndex + 1) % verses.length;
+            const verse = verses[currentVerseIndex];
+            
+            document.getElementById('verseText').innerHTML = verse.text;
+            document.getElementById('verseSource').textContent = '—— ' + verse.source;
+            document.getElementById('verseExplanation').textContent = verse.explanation;
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 随机选择一个偈语
+            currentVerseIndex = Math.floor(Math.random() * verses.length);
+            const verse = verses[currentVerseIndex];
+            document.getElementById('verseText').innerHTML = verse.text;
+            document.getElementById('verseSource').textContent = '—— ' + verse.source;
+            document.getElementById('verseExplanation').textContent = verse.explanation;
+            
+            // 更新计时器显示
+            updateTimerDisplay();
+        });
+    </script>
+</body>
+</html>
