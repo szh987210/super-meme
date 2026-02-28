@@ -1,0 +1,596 @@
+// Zodiac data
+const zodiacSigns = [
+    { name: '白羊座', en: 'aries', date: '03-21 - 04-19', icon: '♈', element: '火' },
+    { name: '金牛座', en: 'taurus', date: '04-20 - 05-20', icon: '♉', element: '土' },
+    { name: '双子座', en: 'gemini', date: '05-21 - 06-20', icon: '♊', element: '风' },
+    { name: '巨蟹座', en: 'cancer', date: '06-21 - 07-22', icon: '♋', element: '水' },
+    { name: '狮子座', en: 'leo', date: '07-23 - 08-22', icon: '♌', element: '火' },
+    { name: '处女座', en: 'virgo', date: '08-23 - 09-22', icon: '♍', element: '土' },
+    { name: '天秤座', en: 'libra', date: '09-23 - 10-22', icon: '♎', element: '风' },
+    { name: '天蝎座', en: 'scorpio', date: '10-23 - 11-21', icon: '♏', element: '水' },
+    { name: '射手座', en: 'sagittarius', date: '11-22 - 12-21', icon: '♐', element: '火' },
+    { name: '摩羯座', en: 'capricorn', date: '12-22 - 01-19', icon: '♑', element: '土' },
+    { name: '水瓶座', en: 'aquarius', date: '01-20 - 02-18', icon: '♒', element: '风' },
+    { name: '双鱼座', en: 'pisces', date: '02-19 - 03-20', icon: '♓', element: '水' }
+];
+
+// Tarot cards data (Major Arcana)
+const tarotCards = [
+    { name: '愚者', icon: '🃏', position: 'beginning', upright: '新的开始、冒险、天真', reversed: '鲁莽、冒险、愚蠢' },
+    { name: '魔术师', icon: '🎭', position: 'creation', upright: '创造力、技能、意志力', reversed: '欺骗、意志薄弱、欺骗' },
+    { name: '女祭司', icon: '🌙', position: 'intuition', upright: '直觉、神秘、潜意识', reversed: '秘密、隐瞒、情感压抑' },
+    { name: '皇后', icon: '👸', position: 'fertility', upright: '富饶、母性、创造力', reversed: '依赖、空虚、创造力受阻' },
+    { name: '皇帝', icon: '👑', position: 'authority', upright: '权威、结构、控制', reversed: '暴政、僵化、缺乏纪律' },
+    { name: '教皇', icon: '⛪', position: 'tradition', upright: '传统、智慧、精神指导', reversed: '反叛、新方法、盲目信仰' },
+    { name: '恋人', icon: '💕', position: 'choice', upright: '爱情、和谐、选择', reversed: '不和谐、分离、错误的选择' },
+    { name: '战车', icon: '🏎️', position: 'action', upright: '胜利、意志力、决心', reversed: '失控、攻击性、缺乏方向' },
+    { name: '力量', icon: '💪', position: 'courage', upright: '勇气、耐心、同情', reversed: '自我怀疑、软弱、缺乏自律' },
+    { name: '隐士', icon: '🏔️', position: 'reflection', upright: '独处、内省、寻求', reversed: '孤立、孤独、拒绝' },
+    { name: '命运之轮', icon: '🎡', position: 'change', upright: '改变、循环、命运', reversed: '厄运、抗拒改变、中断' },
+    { name: '正义', icon: '⚖️', position: 'fairness', upright: '正义、公平、真理', reversed: '不公、偏见、缺乏责任' },
+    { name: '倒吊人', icon: '🙃', position: 'sacrifice', upright: '牺牲、新的视角、放手', reversed: '停滞、无意义的牺牲、抗拒' },
+    { name: '死神', icon: '💀', position: 'transformation', upright: '结束、转变、重生', reversed: '抗拒改变、无法放手、停滞' },
+    { name: '节制', icon: '🌈', position: 'balance', upright: '平衡、节制、耐心', reversed: '失衡、过度、缺乏远见' },
+    { name: '恶魔', icon: '😈', position: 'attachment', upright: '束缚、物质主义、诱惑', reversed: '打破束缚、重获自由、自省' },
+    { name: '高塔', icon: '🏰', position: 'upheaval', upright: '突变、灾难、觉醒', reversed: '避免灾难、恐惧改变、拖延' },
+    { name: '星星', icon: '⭐', position: 'hope', upright: '希望、灵感、宁静', reversed: '绝望、缺乏信心、沮丧' },
+    { name: '月亮', icon: '🌑', position: 'illusion', upright: '幻觉、恐惧、焦虑', reversed: '释放恐惧、清晰、困惑解除' },
+    { name: '太阳', icon: '☀️', position: 'joy', upright: '快乐、成功、温暖', reversed: '暂时的悲伤、缺乏成功、悲观' },
+    { name: '审判', icon: '📯', position: 'renewal', upright: '审判、重生、召唤', reversed: '自我怀疑、拒绝召唤、犹豫' },
+    { name: '世界', icon: '🌍', position: 'completion', upright: '完成、成就、圆满', reversed: '未完成、缺乏闭合、停滞' }
+];
+
+// Initialize zodiac grid
+function initializeZodiacGrid() {
+    const grid = document.getElementById('zodiacGrid');
+    zodiacSigns.forEach(sign => {
+        const div = document.createElement('div');
+        div.className = 'zodiac-item';
+        div.onclick = () => selectZodiac(div, sign);
+        div.innerHTML = `
+            <div class="icon">${sign.icon}</div>
+            <div class="name">${sign.name}</div>
+        `;
+        grid.appendChild(div);
+    });
+
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('horoscopeDate').value = today;
+}
+
+// Initialize select options
+function initializeSelectOptions() {
+    const sign1 = document.getElementById('sign1');
+    const sign2 = document.getElementById('sign2');
+    
+    zodiacSigns.forEach(sign => {
+        const option1 = document.createElement('option');
+        option1.value = sign.en;
+        option1.textContent = sign.icon + ' ' + sign.name;
+        sign1.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = sign.en;
+        option2.textContent = sign.icon + ' ' + sign.name;
+        sign2.appendChild(option2);
+    });
+
+    // Set birth date default
+    document.getElementById('birthDate').value = '1990-01-01';
+}
+
+// Select zodiac sign
+let selectedZodiac = null;
+function selectZodiac(element, sign) {
+    document.querySelectorAll('.zodiac-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    element.classList.add('selected');
+    selectedZodiac = sign;
+}
+
+// Show section
+function showSection(section) {
+    document.getElementById('fortuneMenu').style.display = 'none';
+    document.querySelectorAll('.fortune-section').forEach(s => {
+        s.classList.remove('active');
+    });
+    
+    const sectionId = section + 'Section';
+    document.getElementById(sectionId).classList.add('active');
+}
+
+// Back to menu
+function backToMenu() {
+    document.querySelectorAll('.fortune-section').forEach(s => {
+        s.classList.remove('active');
+    });
+    document.getElementById('fortuneMenu').style.display = 'grid';
+}
+
+// Generate random score
+function generateRandomScore(min = 60, max = 100) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Generate horoscope
+function generateHoroscope() {
+    if (!selectedZodiac) {
+        alert('请选择你的星座');
+        return;
+    }
+
+    const loading = document.getElementById('horoscopeLoading');
+    const result = document.getElementById('horoscopeResult');
+    
+    loading.classList.add('show');
+    result.classList.remove('show');
+    
+    setTimeout(() => {
+        const overallScore = generateRandomScore(65, 95);
+        const dimensions = {
+            career: { score: generateRandomScore(60, 95), description: generateFortuneDescription('career') },
+            wealth: { score: generateRandomScore(60, 95), description: generateFortuneDescription('wealth') },
+            love: { score: generateRandomScore(60, 95), description: generateFortuneDescription('love') },
+            health: { score: generateRandomScore(60, 95), description: generateFortuneDescription('health') }
+        };
+
+        const luckyNumbers = [generateRandomNumber(1, 9), generateRandomNumber(10, 31), generateRandomNumber(100, 999)];
+        const colors = ['金色', '紫色', '红色', '蓝色', '绿色', '黄色'];
+        const directions = ['东方', '西方', '南方', '北方', '东南方', '西南方'];
+
+        result.innerHTML = `
+            <div class="fortune-score">
+                <div class="score-circle" style="--score: ${overallScore}%">
+                    <div class="score-value">${overallScore}</div>
+                </div>
+            </div>
+            <h3 style="text-align: center; color: #ffd700; margin-bottom: 30px;">今日综合运势</h3>
+            
+            <div class="dimension-cards">
+                <div class="dimension-card">
+                    <h4>💼 事业运势</h4>
+                    <div class="dimension-score">
+                        <span>${dimensions.career.score}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${dimensions.career.score}%"></div>
+                        </div>
+                        <span>/100</span>
+                    </div>
+                    <p style="color: #a0a0a0; font-size: 0.9em;">${dimensions.career.description}</p>
+                </div>
+                
+                <div class="dimension-card">
+                    <h4>💰 财富运势</h4>
+                    <div class="dimension-score">
+                        <span>${dimensions.wealth.score}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${dimensions.wealth.score}%"></div>
+                        </div>
+                        <span>/100</span>
+                    </div>
+                    <p style="color: #a0a0a0; font-size: 0.9em;">${dimensions.wealth.description}</p>
+                </div>
+                
+                <div class="dimension-card">
+                    <h4>💖 感情运势</h4>
+                    <div class="dimension-score">
+                        <span>${dimensions.love.score}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${dimensions.love.score}%"></div>
+                        </div>
+                        <span>/100</span>
+                    </div>
+                    <p style="color: #a0a0a0; font-size: 0.9em;">${dimensions.love.description}</p>
+                </div>
+                
+                <div class="dimension-card">
+                    <h4>💪 健康运势</h4>
+                    <div class="dimension-score">
+                        <span>${dimensions.health.score}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${dimensions.health.score}%"></div>
+                        </div>
+                        <span>/100</span>
+                    </div>
+                    <p style="color: #a0a0a0; font-size: 0.9em;">${dimensions.health.description}</p>
+                </div>
+            </div>
+            
+            <div class="lucky-elements">
+                <div class="lucky-item">
+                    <div class="label">幸运数字</div>
+                    <div class="value">${luckyNumbers.join(', ')}</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="label">幸运颜色</div>
+                    <div class="value">${colors[Math.floor(Math.random() * colors.length)]}</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="label">幸运方位</div>
+                    <div class="value">${directions[Math.floor(Math.random() * directions.length)]}</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="label">幸运时间</div>
+                    <div class="value">${generateRandomNumber(9, 11)}:00-${generateRandomNumber(14, 16)}:00</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255, 215, 0, 0.05); border-radius: 15px;">
+                <h4 style="color: #ffd700; margin-bottom: 15px;">💡 今日建议</h4>
+                <p style="color: #a0a0a0; line-height: 1.8;">${generateDailyAdvice(overallScore)}</p>
+            </div>
+        `;
+        
+        loading.classList.remove('show');
+        result.classList.add('show');
+    }, 1500);
+}
+
+// Generate fortune description
+function generateFortuneDescription(type) {
+    const descriptions = {
+        career: [
+            '今日工作效率较高，适合处理重要项目。',
+            '工作上可能会有新的机遇出现，保持开放心态。',
+            '与同事协作顺利，团队合作将带来好成果。',
+            '注意细节处理，避免小错误影响整体进度。',
+            '今日适合学习新技能，提升个人能力。'
+        ],
+        wealth: [
+            '财运平稳，消费理性，适合规划理财。',
+            '可能有意外之财，但仍需谨慎理财。',
+            '投资需谨慎，不宜做高风险决策。',
+            '今日适合整理财务，制定储蓄计划。',
+            '财运有小幅上升，可适当进行小额投资。'
+        ],
+        love: [
+            '单身者有机会遇到心仪对象。',
+            '有伴侣者感情稳定，适合增进交流。',
+            '今日沟通顺畅，适合表达内心想法。',
+            '感情运势不错，适合约会或增进感情。',
+            '注意控制情绪，避免误会影响感情。'
+        ],
+        health: [
+            '身体状态良好，精力充沛。',
+            '注意饮食均衡，避免暴饮暴食。',
+            '适合运动锻炼，增强体质。',
+            '注意休息，避免过度劳累。',
+            '保持良好作息，早睡早起有益健康。'
+        ]
+    };
+    const options = descriptions[type];
+    return options[Math.floor(Math.random() * options.length)];
+}
+
+// Generate daily advice
+function generateDailyAdvice(score) {
+    if (score >= 85) {
+        return '今日运势极佳！把握机会，勇敢追求目标。适合处理重要事务，也可能遇到贵人相助。保持积极心态，成功在望！';
+    } else if (score >= 70) {
+        return '今日运势不错，可以按计划推进工作。注意沟通协调，多听取他人意见。财运平稳，感情方面有望突破。';
+    } else if (score >= 60) {
+        return '今日运势中等，需要保持耐心。避免冒险决策，稳步前进为宜。注意休息，调节情绪，相信困难很快会过去。';
+    } else {
+        return '今日运势一般，需要更加谨慎。避免重要决策，做好本职工作即可。注意健康，多与朋友交流寻求支持。';
+    }
+}
+
+// Generate random number
+function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Generate compatibility
+function generateCompatibility() {
+    const sign1 = document.getElementById('sign1').value;
+    const sign2 = document.getElementById('sign2').value;
+    
+    const loading = document.getElementById('compatibilityLoading');
+    const result = document.getElementById('compatibilityResult');
+    
+    loading.classList.add('show');
+    result.classList.remove('show');
+    
+    setTimeout(() => {
+        const zodiac1 = zodiacSigns.find(z => z.en === sign1);
+        const zodiac2 = zodiacSigns.find(z => z.en === sign2);
+        
+        // Calculate compatibility score based on elements
+        const compatibilityMatrix = {
+            '火': { '火': 85, '土': 70, '风': 90, '水': 60 },
+            '土': { '火': 70, '土': 80, '风': 65, '水': 85 },
+            '风': { '火': 90, '土': 65, '风': 80, '水': 70 },
+            '水': { '火': 60, '土': 85, '风': 70, '水': 85 }
+        };
+        
+        const baseScore = compatibilityMatrix[zodiac1.element][zodiac2.element];
+        const finalScore = baseScore + generateRandomNumber(-5, 10);
+        
+        const stars = Math.round(finalScore / 20);
+        const starRating = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+        
+        let relationshipType = '';
+        if (finalScore >= 90) relationshipType = '天作之合';
+        else if (finalScore >= 80) relationshipType = '非常般配';
+        else if (finalScore >= 70) relationshipType = '比较合适';
+        else if (finalScore >= 60) relationshipType = '需要磨合';
+        else relationshipType = '不太合适';
+        
+        const strengths = [
+            '性格互补，互相吸引',
+            '价值观相似，容易达成共识',
+            '生活态度一致，相处愉快',
+            '都有追求完美的倾向'
+        ];
+        
+        const challenges = [
+            '沟通方式可能存在差异',
+            '在某些问题上看法不同',
+            '需要更多的耐心和理解',
+            '性格强势时容易产生冲突'
+        ];
+        
+        result.innerHTML = `
+            <div class="compatibility-result">
+                <h3 style="color: #ffd700; margin-bottom: 20px;">${zodiac1.icon} ${zodiac1.name} × ${zodiac2.name} ${zodiac2.icon}</h3>
+                
+                <div class="compatibility-score">${finalScore}</div>
+                <div class="compatibility-stars">${starRating}</div>
+                
+                <div style="font-size: 1.5em; color: #ff6b6b; margin-bottom: 30px;">${relationshipType}</div>
+                
+                <div style="text-align: left; margin-bottom: 30px;">
+                    <h4 style="color: #ffd700; margin-bottom: 15px;">💚 优势</h4>
+                    <ul style="color: #a0a0a0; line-height: 1.8;">
+                        ${strengths.slice(0, 3).map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div style="text-align: left; margin-bottom: 30px;">
+                    <h4 style="color: #ff6b6b; margin-bottom: 15px;">⚠️ 需要注意</h4>
+                    <ul style="color: #a0a0a0; line-height: 1.8;">
+                        ${challenges.slice(0, 3).map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div style="padding: 20px; background: rgba(255, 215, 0, 0.05); border-radius: 15px; text-align: left;">
+                    <h4 style="color: #ffd700; margin-bottom: 15px;">💡 相处建议</h4>
+                    <p style="color: #a0a0a0; line-height: 1.8;">
+                        你们的配对指数为${finalScore}分，属于${relationshipType}的关系。建议你们多沟通、多理解，
+                        在遇到分歧时保持耐心，尊重彼此的想法。共同经营，感情会越来越好！
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        loading.classList.remove('show');
+        result.classList.add('show');
+    }, 1500);
+}
+
+// Draw tarot cards
+function drawTarotCards() {
+    const question = document.getElementById('tarotQuestion').value;
+    
+    const loading = document.getElementById('tarotLoading');
+    const result = document.getElementById('tarotResult');
+    
+    loading.classList.add('show');
+    result.classList.remove('show');
+    
+    setTimeout(() => {
+        // Shuffle and pick 3 random cards
+        const shuffled = [...tarotCards].sort(() => Math.random() - 0.5);
+        const selectedCards = shuffled.slice(0, 3);
+        const positions = ['过去', '现在', '未来'];
+        
+        let cardsHtml = selectedCards.map((card, index) => {
+            const isReversed = Math.random() > 0.5;
+            const meaning = isReversed ? card.reversed : card.upright;
+            const position = isReversed ? '逆位' : '正位';
+            
+            return `
+                <div class="tarot-card" onclick="this.classList.toggle('flipped')">
+                    <div class="tarot-card-inner">
+                        <div class="tarot-card-front">
+                            <div class="card-icon">${card.icon}</div>
+                            <div style="color: #ffd700; font-size: 0.9em;">${positions[index]}</div>
+                        </div>
+                        <div class="tarot-card-back">
+                            <div class="card-icon">${card.icon}</div>
+                            <div class="card-name">${card.name}</div>
+                            <div class="card-position">${position}</div>
+                            <p style="font-size: 0.8em; margin-top: 10px;">${meaning}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        result.innerHTML = `
+            ${question ? `<div style="text-align: center; margin-bottom: 20px; color: #ffd700; font-size: 1.2em;">问题：${question}</div>` : ''}
+            <h3 style="text-align: center; color: #ffd700; margin-bottom: 10px;">🎴 你的塔罗牌阵</h3>
+            <p style="text-align: center; color: #a0a0a0; margin-bottom: 20px;">点击卡片翻转查看解读</p>
+            
+            <div class="tarot-cards">
+                ${cardsHtml}
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255, 215, 0, 0.05); border-radius: 15px;">
+                <h4 style="color: #ffd700; margin-bottom: 15px;">💡 综合解读</h4>
+                <p style="color: #a0a0a0; line-height: 1.8;">
+                    ${generateTarotInterpretation(selectedCards)}
+                </p>
+            </div>
+        `;
+        
+        loading.classList.remove('show');
+        result.classList.add('show');
+    }, 2000);
+}
+
+// Generate tarot interpretation
+function generateTarotInterpretation(cards) {
+    const interpretations = [
+        `这张牌阵显示，过去可能经历了${cards[0].name}的影响，现在正处于${cards[1].name}的状态中。未来预示着${cards[2].name}的走向。整体来看，这是一个积极的变化过程，建议保持开放的心态接受变化。`,
+        `从过去到现在，你经历了一系列的转变。现在面临的局面需要更多的耐心和智慧。未来的走向取决于你当前的选择，相信直觉，勇敢前行。`,
+        `这张牌阵暗示了一段重要的成长历程。过去的经历为现在奠定了基础，现在是你实现目标的关键时期。未来充满希望，但需要付出持续的努力。`
+    ];
+    return interpretations[Math.floor(Math.random() * interpretations.length)];
+}
+
+// Analyze numerology
+function analyzeNumerology() {
+    const birthDate = document.getElementById('birthDate').value;
+    
+    if (!birthDate) {
+        alert('请输入出生日期');
+        return;
+    }
+    
+    const loading = document.getElementById('numerologyLoading');
+    const result = document.getElementById('numerologyResult');
+    
+    loading.classList.add('show');
+    result.classList.remove('show');
+    
+    setTimeout(() => {
+        const dateParts = birthDate.split('-');
+        const day = parseInt(dateParts[2]);
+        const month = parseInt(dateParts[1]);
+        const year = parseInt(dateParts[0]);
+        
+        // Calculate life path number
+        let sum = day + month + year;
+        while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+            let newSum = 0;
+            while (sum > 0) {
+                newSum += sum % 10;
+                sum = Math.floor(sum / 10);
+            }
+            sum = newSum;
+        }
+        
+        const lifePathNumber = sum;
+        
+        // Generate lucky numbers
+        const luckyNumbers = [
+            lifePathNumber,
+            generateRandomNumber(1, 9),
+            generateRandomNumber(10, 31),
+            generateRandomNumber(100, 999)
+        ].filter((num, index, self) => self.indexOf(num) === index);
+        
+        const numberMeanings = {
+            1: '领导者：独立、自信、富有创造力，天生的领导者',
+            2: '和平者：温和、有同理心、善于合作，追求和谐',
+            3: '艺术家：富有创造力、表达力强、乐观向上',
+            4: '实干家：稳重、可靠、有条理，注重实际',
+            5: '探险家：热爱自由、适应力强、喜欢冒险',
+            6: '守护者：负责任、有爱心、重视家庭',
+            7: '思考者：智慧、有洞察力、追求真理',
+            8: '成功者：追求成功、有商业头脑、野心勃勃',
+            9: '人道主义者：慷慨、富有同情心、帮助他人',
+            11: '启迪者：精神追求、直觉强、有远见',
+            22: '大师 builder：实现梦想的能力、宏大愿景、实用主义',
+            33: '大师导师：无私奉献、启迪他人、精神领袖'
+        };
+        
+        const personalityTraits = {
+            1: ['独立自主', '积极主动', '创新精神', '领导才能'],
+            2: ['温柔体贴', '善于倾听', '合作精神', '协调能力'],
+            3: ['富有创造力', '善于表达', '乐观开朗', '社交能力'],
+            4: ['稳重可靠', '勤奋踏实', '注重细节', '有条理'],
+            5: ['热爱自由', '适应力强', '好奇心旺盛', '冒险精神'],
+            6: ['负责任', '有爱心', '重视家庭', '善良'],
+            7: ['有智慧', '理性思考', '追求真理', '内敛'],
+            8: ['商业头脑', '目标明确', '坚韧不拔', '追求成功'],
+            9: ['慷慨大方', '有同情心', '追求正义', '帮助他人'],
+            11: ['精神追求', '直觉敏锐', '有远见', '理想主义'],
+            22: ['实现梦想', '宏大愿景', '实用主义', '领导力'],
+            33: ['无私奉献', '启迪他人', '精神领袖', '大爱']
+        };
+        
+        const luckyColors = ['金色', '紫色', '红色', '蓝色', '绿色', '黄色', '白色', '粉色'];
+        const luckyDays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+        
+        result.innerHTML = `
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 6em; color: #ffd700; margin-bottom: 10px;">${lifePathNumber}</div>
+                <h3 style="color: #ffd700; font-size: 1.5em;">你的生命灵数</h3>
+            </div>
+            
+            <div style="padding: 20px; background: rgba(255, 215, 0, 0.05); border-radius: 15px; margin-bottom: 20px;">
+                <h4 style="color: #ffd700; margin-bottom: 15px;">💫 数字含义</h4>
+                <p style="color: #a0a0a0; line-height: 1.8; font-size: 1.1em;">
+                    ${numberMeanings[lifePathNumber]}
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #ffd700; margin-bottom: 15px;">✨ 性格特质</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    ${personalityTraits[lifePathNumber].map(trait => 
+                        `<span style="background: rgba(255, 215, 0, 0.2); color: #ffd700; padding: 8px 15px; border-radius: 20px; font-size: 0.9em;">${trait}</span>`
+                    ).join('')}
+                </div>
+            </div>
+            
+            <div class="lucky-elements">
+                <div class="lucky-item">
+                    <div class="label">幸运数字</div>
+                    <div class="value">${luckyNumbers.join(', ')}</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="label">幸运颜色</div>
+                    <div class="value">${luckyColors[lifePathNumber % luckyColors.length]}</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="label">幸运星期</div>
+                    <div class="value">${luckyDays[lifePathNumber % luckyDays.length]}</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="label">生命路径</div>
+                    <div class="value">${lifePathNumber}号路径</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255, 215, 0, 0.05); border-radius: 15px;">
+                <h4 style="color: #ffd700; margin-bottom: 15px;">💡 人生建议</h4>
+                <p style="color: #a0a0a0; line-height: 1.8;">
+                    ${generateNumerologyAdvice(lifePathNumber)}
+                </p>
+            </div>
+        `;
+        
+        loading.classList.remove('show');
+        result.classList.add('show');
+    }, 1500);
+}
+
+// Generate numerology advice
+function generateNumerologyAdvice(number) {
+    const advices = {
+        1: '你天生具有领导才能，要相信自己，勇于承担责任。同时要注意倾听他人意见，避免过于独断。',
+        2: '你善于合作，是团队中的调和剂。要学会坚持自己的立场，不要总是迁就他人。',
+        3: '你的创造力和表达能力是你的天赋。要找到合适的平台展现自己，保持积极乐观的心态。',
+        4: '你稳重可靠，是值得信赖的人。要在稳定中寻找突破，不要害怕改变。',
+        5: '你热爱自由，追求变化。要学会专注，避免因为分散注意力而一事无成。',
+        6: '你有强烈的责任感，重视家庭和他人。要学会照顾好自己，不要总是为他人而活。',
+        7: '你追求真理和智慧，具有深刻的洞察力。要学会与他人分享你的想法，不要过于孤僻。',
+        8: '你有商业头脑，追求成功。要平衡工作与生活，不要让物质追求成为唯一目标。',
+        9: '你富有同情心，乐于助人。要设立界限，不要过度牺牲自己。',
+        11: '你有精神追求和远见。要将理想落实到行动中，避免空想。',
+        22: '你有实现宏大愿景的能力。要脚踏实地，一步一步实现目标。',
+        33: '你有启迪他人和无私奉献的精神。要平衡自己的需求与对他人的帮助。'
+    };
+    return advices[number];
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializeZodiacGrid();
+    initializeSelectOptions();
+});
