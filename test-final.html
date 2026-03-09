@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudBase 连接测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        #log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .log-time {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☁️ CloudBase 连接测试</h1>
+        
+        <div class="info status">
+            <strong>环境ID:</strong> ai-native-5gt9y8d017c50851<br>
+            <strong>集合名:</strong> students<br>
+            <strong>SDK:</strong> 官方 CDN
+        </div>
+
+        <button onclick="testConnection()" id="btnConnect">测试连接</button>
+        <button onclick="testRead()" id="btnRead">测试读取</button>
+        <button onclick="testWrite()" id="btnWrite">测试写入</button>
+
+        <div id="result"></div>
+        <div id="log"></div>
+    </div>
+
+    <!-- 使用 CloudBase 官方 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk@1.7.3/dist/cloudbase.full.js"></script>
+    <script>
+        const ENV_ID = 'ai-native-5gt9y8d017c50851';
+        let db;
+        let app;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
+            entry.style.color = type === 'error' ? '#dc3545' : (type === 'success' ? '#28a745' : '#333');
+            logDiv.insertBefore(entry, logDiv.firstChild);
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="${type} status">${message}</div>`;
+        }
+
+        async function initCloud() {
+            try {
+                log('正在初始化 CloudBase...');
+                
+                // 检查全局变量
+                const cloudBase = window.cloudbase || window.tcb;
+                if (!cloudBase) {
+                    throw new Error('CloudBase SDK 未加载');
+                }
+                
+                log('SDK 加载成功');
+                
+                app = cloudBase.init({
+                    env: ENV_ID
+                });
+                
+                log('正在获取数据库实例...');
+                db = app.database();
+                
+                if (!db) {
+                    throw new Error('数据库实例创建失败');
+                }
+                
+                log('CloudBase 初始化成功', 'success');
+                showResult('✅ CloudBase 初始化成功', 'success');
+                return true;
+            } catch (error) {
+                log('初始化失败: ' + error.message, 'error');
+                log('错误详情: ' + (error.stack || error.toString()), 'error');
+                showResult('❌ 初始化失败: ' + error.message, 'error');
+                console.error('初始化详细错误:', error);
+                return false;
+            }
+        }
+
+        async function testConnection() {
+            log('开始测试连接...');
+            const success = await initCloud();
+            if (success) {
+                log('连接测试通过', 'success');
+            }
+        }
+
+        async function testRead() {
+            log('开始测试读取数据...');
+            
+            if (!db) {
+                const success = await initCloud();
+                if (!success) return;
+            }
+            
+            try {
+                log('正在读取集合 students 中的数据...');
+                const res = await db.collection('students').limit(10).get();
+                log(`读取成功，共 ${res.data.length} 条数据`, 'success');
+                showResult(`✅ 读取成功，共 ${res.data.length} 条数据`, 'success');
+                
+                if (res.data.length > 0) {
+                    log('第一条数据: ' + JSON.stringify(res.data[0]));
+                }
+            } catch (error) {
+                log('读取失败: ' + error.message, 'error');
+                log('错误详情: ' + (error.stack || error.toString()), 'error');
+                showResult('❌ 读取失败: ' + error.message, 'error');
+                console.error('读取详细错误:', error);
+            }
+        }
+
+        async function testWrite() {
+            log('开始测试写入数据...');
+            
+            if (!db) {
+                const success = await initCloud();
+                if (!success) return;
+            }
+            
+            try {
+                log('正在准备测试数据...');
+                const testData = {
+                    name: '测试学生' + Date.now(),
+                    grade: '高一',
+                    class: '1班',
+                    subjects: '政史地',
+                    code: 'TEST' + Date.now(),
+                    account: 'test' + Date.now(),
+                    password: '123456',
+                    parentName: '测试家长',
+                    completed: false,
+                    createTime: new Date()
+                };
+                
+                log('正在写入数据到集合 students...');
+                const res = await db.collection('students').add({
+                    data: testData
+                });
+                
+                log(`写入成功，文档ID: ${res.id}`, 'success');
+                showResult('✅ 写入测试成功', 'success');
+            } catch (error) {
+                log('写入失败: ' + error.message, 'error');
+                log('错误详情: ' + (error.stack || error.toString()), 'error');
+                showResult('❌ 写入失败: ' + error.message, 'error');
+                console.error('写入详细错误:', error);
+            }
+        }
+
+        window.onload = function() {
+            log('页面加载完成');
+            log('检查 CloudBase SDK...');
+            
+            if (window.cloudbase) {
+                log('cloudbase 对象已加载', 'success');
+            } else if (window.tcb) {
+                log('tcb 对象已加载', 'success');
+            } else {
+                log('SDK 未加载，请检查网络连接', 'error');
+            }
+        };
+    </script>
+</body>
+</html>
