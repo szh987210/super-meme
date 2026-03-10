@@ -290,15 +290,15 @@
             .header h1 {
                 font-size: 24px;
             }
-            
+
             .student-item {
                 padding: 15px;
             }
-            
+
             .student-name {
                 font-size: 16px;
             }
-            
+
             .stats {
                 grid-template-columns: 1fr;
             }
@@ -365,10 +365,10 @@
                     <label for="parentName" style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">
                         请输入家长姓名 <span style="color: red;">*</span>
                     </label>
-                    <input 
-                        type="text" 
-                        id="parentName" 
-                        class="search-input" 
+                    <input
+                        type="text"
+                        id="parentName"
+                        class="search-input"
                         style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;"
                         placeholder="请输入您的姓名"
                     >
@@ -380,20 +380,6 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal()">取消</button>
                 <button class="btn btn-primary" onclick="confirmView()">确认查阅</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 查阅记录弹窗 -->
-    <div class="modal" id="recordsModal">
-        <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
-            <div class="modal-header">
-                <h3>📋 查阅记录</h3>
-            </div>
-            <div class="modal-body" id="recordsContent">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="closeRecordsModal()">关闭</button>
             </div>
         </div>
     </div>
@@ -437,13 +423,26 @@
         </div>
     </div>
 
+    <!-- 查阅记录弹窗 -->
+    <div class="modal" id="recordsModal">
+        <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>📋 查阅记录</h3>
+            </div>
+            <div class="modal-body" id="recordsContent">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeRecordsModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ========================================================
         // 👇 在这里配置学生数据 👇
         // ========================================================
        const STUDENTS = [
     {
-        id: undefined,
         name: "蔡宇彤",
         grade: "高一",
         class: "1班",
@@ -453,7 +452,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "蔡昭娜",
         grade: "高一",
         class: "1班",
@@ -463,7 +461,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "陈彩耘",
         grade: "高一",
         class: "1班",
@@ -473,7 +470,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "陈曦01",
         grade: "高一",
         class: "1班",
@@ -483,7 +479,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "邓嘉怡",
         grade: "高一",
         class: "1班",
@@ -493,7 +488,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "邓丽君",
         grade: "高一",
         class: "1班",
@@ -503,7 +497,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "付文轩",
         grade: "高一",
         class: "1班",
@@ -513,7 +506,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "关棚",
         grade: "高一",
         class: "1班",
@@ -523,7 +515,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "何妮霖",
         grade: "高一",
         class: "1班",
@@ -533,7 +524,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "胡琛",
         grade: "高一",
         class: "1班",
@@ -543,7 +533,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "胡皓然",
         grade: "高一",
         class: "1班",
@@ -553,7 +542,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "黄一",
         grade: "高一",
         class: "1班",
@@ -563,7 +551,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "戢焱垚",
         grade: "高一",
         class: "1班",
@@ -573,7 +560,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "金祖妍",
         grade: "高一",
         class: "1班",
@@ -583,7 +569,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "赖兴宇",
         grade: "高一",
         class: "1班",
@@ -593,7 +578,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "乐天",
         grade: "高一",
         class: "1班",
@@ -603,7 +587,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "李可欣",
         grade: "高一",
         class: "1班",
@@ -613,7 +596,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "李抒颖",
         grade: "高一",
         class: "1班",
@@ -623,7 +605,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "李宜乐",
         grade: "高一",
         class: "1班",
@@ -633,7 +614,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "林珈如",
         grade: "高一",
         class: "1班",
@@ -643,7 +623,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "林子粤",
         grade: "高一",
         class: "1班",
@@ -653,7 +632,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "凌硕",
         grade: "高一",
         class: "1班",
@@ -663,7 +641,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "刘嘉怡",
         grade: "高一",
         class: "1班",
@@ -673,7 +650,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "刘雨晨",
         grade: "高一",
         class: "1班",
@@ -683,7 +659,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "卢钰",
         grade: "高一",
         class: "1班",
@@ -693,7 +668,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "栾语珊",
         grade: "高一",
         class: "1班",
@@ -703,7 +677,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "欧阳晓静",
         grade: "高一",
         class: "1班",
@@ -713,7 +686,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "潘奕杉",
         grade: "高一",
         class: "1班",
@@ -723,7 +695,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "秦明辉",
         grade: "高一",
         class: "1班",
@@ -733,7 +704,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "芮一笑",
         grade: "高一",
         class: "1班",
@@ -743,7 +713,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "邵子晴",
         grade: "高一",
         class: "1班",
@@ -753,7 +722,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "史嘉暄",
         grade: "高一",
         class: "1班",
@@ -763,7 +731,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "唐颂杰",
         grade: "高一",
         class: "1班",
@@ -773,7 +740,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "唐雨昕",
         grade: "高一",
         class: "1班",
@@ -783,7 +749,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "唐韵寒",
         grade: "高一",
         class: "1班",
@@ -793,7 +758,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "王弘羽",
         grade: "高一",
         class: "1班",
@@ -803,7 +767,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "王小衣",
         grade: "高一",
         class: "1班",
@@ -813,7 +776,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "王宇锋",
         grade: "高一",
         class: "1班",
@@ -823,7 +785,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "魏楚寅",
         grade: "高一",
         class: "1班",
@@ -833,7 +794,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "文佳欣",
         grade: "高一",
         class: "1班",
@@ -843,7 +803,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "吴与凡",
         grade: "高一",
         class: "1班",
@@ -853,7 +812,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "徐希蕊",
         grade: "高一",
         class: "1班",
@@ -863,7 +821,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "杨妍",
         grade: "高一",
         class: "1班",
@@ -873,7 +830,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "殷思雨",
         grade: "高一",
         class: "1班",
@@ -883,7 +839,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "尤文杰",
         grade: "高一",
         class: "1班",
@@ -893,7 +848,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "余浩森",
         grade: "高一",
         class: "1班",
@@ -903,7 +857,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "张灏",
         grade: "高一",
         class: "1班",
@@ -913,7 +866,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "张锦煊",
         grade: "高一",
         class: "1班",
@@ -923,7 +875,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "张梓萱01",
         grade: "高一",
         class: "1班",
@@ -933,7 +884,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "章渝哲",
         grade: "高一",
         class: "1班",
@@ -943,7 +893,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "赵紫桐",
         grade: "高一",
         class: "1班",
@@ -953,7 +902,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "周傲雪",
         grade: "高一",
         class: "1班",
@@ -963,7 +911,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "朱淑雅",
         grade: "高一",
         class: "1班",
@@ -973,7 +920,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "祝辰睿",
         grade: "高一",
         class: "1班",
@@ -983,7 +929,6 @@
         password: "abc123"
     },
     {
-        id: undefined,
         name: "邹宜君",
         grade: "高一",
         class: "1班",
@@ -997,7 +942,7 @@
         // 👆 学生数据配置结束 👆
         // ========================================================
 
-        // 从 localStorage 读取已查阅记录
+        // 从 localStorage 读取已查阅记录（使用学生姓名作为标识）
         let viewedStudents = JSON.parse(localStorage.getItem('viewedStudents') || '[]');
 
         // 从 localStorage 读取查阅记录（包含家长姓名）
@@ -1010,7 +955,7 @@
         function init() {
             renderStudentList();
             updateStats();
-            
+
             // 搜索功能
             document.getElementById('searchInput').addEventListener('input', function(e) {
                 renderStudentList(e.target.value);
@@ -1114,9 +1059,9 @@
             viewRecords.push(record);
             localStorage.setItem('viewRecords', JSON.stringify(viewRecords));
 
-            // 关闭确认弹窗（不清除 currentStudent）
+            // 关闭确认弹窗并清空输入框
             document.getElementById('confirmModal').classList.remove('show');
-            document.getElementById('parentName').value = ''; // 清空输入框
+            parentNameInput.value = '';
 
             // 显示信息弹窗
             showInfoModal();
