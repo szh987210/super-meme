@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息查询 - 家长端</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .student-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .student-item {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .student-item:hover {
+            background-color: #f8f9ff;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .student-detail {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #ffe0e0;
+            color: #d32f2f;
+        }
+
+        .status-completed {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .check-icon {
+            font-size: 16px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .info-value.highlight {
+            color: #667eea;
+            font-size: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-footer {
+            padding: 15px 25px;
+            background: #f8f9ff;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .student-item {
+                padding: 15px;
+            }
+
+            .student-name {
+                font-size: 16px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 学生信息查询系统</h1>
+            <p>点击学生姓名查看详细账号信息</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">总人数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedCount">0</div>
+                <div class="stat-label">已查阅</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">未查阅</div>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input
+                type="text"
+                class="search-input"
+                id="searchInput"
+                placeholder="🔍 输入学生姓名搜索..."
+            >
+        </div>
+
+        <div style="text-align: right; margin-bottom: 15px;">
+            <button onclick="showViewRecords()" style="background: #fff; border: 1px solid #4CAF50; color: #4CAF50; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                📋 查阅记录
+            </button>
+        </div>
+
+        <div class="student-list" id="studentList">
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>正在加载学生信息...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认查阅</h3>
+                <p id="confirmStudentName"></p>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    您确定要查看此学生的账号信息吗？
+                </p>
+                <div style="margin: 20px 0;">
+                    <label for="parentName" style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">
+                        请输入家长姓名 <span style="color: red;">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="parentName"
+                        class="search-input"
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;"
+                        placeholder="请输入您的姓名"
+                    >
+                </div>
+                <p style="text-align: center; color: #999; font-size: 13px; margin-top: 10px;">
+                    （您的姓名将被记录，仅供老师查阅确认）
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmView()">确认查阅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 信息弹窗 -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>账号信息</h3>
+                <p id="infoStudentName"></p>
+            </div>
+            <div class="modal-body">
+                <div class="info-row">
+                    <span class="info-label">教育号</span>
+                    <span class="info-value highlight" id="infoCode"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">账号</span>
+                    <span class="info-value highlight" id="infoAccount"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">密码</span>
+                    <span class="info-value highlight" id="infoPassword"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">年级</span>
+                    <span class="info-value" id="infoGrade"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">班级</span>
+                    <span class="info-value" id="infoClass"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">学科</span>
+                    <span class="info-value" id="infoSubjects"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeInfoModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查阅记录弹窗 -->
+    <div class="modal" id="recordsModal">
+        <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>📋 查阅记录</h3>
+            </div>
+            <div class="modal-body" id="recordsContent">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeRecordsModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================================
+        // 👇 在这里配置学生数据 👇
+        // ========================================================
+       const STUDENTS = [
+    {
+        name: "蔡宇彤",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30101",
+        account: "cyt30101c",
+        password: "abc123"
+    },
+    {
+        name: "蔡昭娜",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30102",
+        account: "czn30102a",
+        password: "abc123"
+    },
+    {
+        name: "陈彩耘",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30103",
+        account: "ccy30103d",
+        password: "abc123"
+    },
+    {
+        name: "陈曦01",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30104",
+        account: "cx30104d",
+        password: "abc123"
+    },
+    {
+        name: "邓嘉怡",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30105",
+        account: "djy30105c",
+        password: "abc123"
+    },
+    {
+        name: "邓丽君",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30106",
+        account: "d1j30106",
+        password: "abc123"
+    },
+    {
+        name: "付文轩",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30107",
+        account: "fwx30107",
+        password: "abc123"
+    },
+    {
+        name: "关棚",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30108",
+        account: "gp30108a",
+        password: "abc123"
+    },
+    {
+        name: "何妮霖",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30109",
+        account: "hn130109a",
+        password: "abc123"
+    },
+    {
+        name: "胡琛",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30110",
+        account: "hc30110b",
+        password: "abc123"
+    },
+    {
+        name: "胡皓然",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30111",
+        account: "hhr30111",
+        password: "abc123"
+    },
+    {
+        name: "黄一",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30112",
+        account: "hy30112d",
+        password: "abc123"
+    },
+    {
+        name: "戢焱垚",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30113",
+        account: "jyy30113b",
+        password: "abc123"
+    },
+    {
+        name: "金祖妍",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30114",
+        account: "jzy30114",
+        password: "abc123"
+    },
+    {
+        name: "赖兴宇",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30115",
+        account: "1xy301150",
+        password: "abc123"
+    },
+    {
+        name: "乐天",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30116",
+        account: "1t30116",
+        password: "abc123"
+    },
+    {
+        name: "李可欣",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30117",
+        account: "1kx30117a",
+        password: "abc123"
+    },
+    {
+        name: "李抒颖",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30118",
+        account: "1sy30118f",
+        password: "abc123"
+    },
+    {
+        name: "李宜乐",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30119",
+        account: "1y130119b",
+        password: "abc123"
+    },
+    {
+        name: "林珈如",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30120",
+        account: "1jr30120b",
+        password: "abc123"
+    },
+    {
+        name: "林子粤",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30121",
+        account: "1zy30121m",
+        password: "abc123"
+    },
+    {
+        name: "凌硕",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30122",
+        account: "1s30122c",
+        password: "abc123"
+    },
+    {
+        name: "刘嘉怡",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30123",
+        account: "L1y30123h",
+        password: "abc123"
+    },
+    {
+        name: "刘雨晨",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30124",
+        account: "1yc30124f",
+        password: "abc123"
+    },
+    {
+        name: "卢钰",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30125",
+        account: "1y301251",
+        password: "abc123"
+    },
+    {
+        name: "栾语珊",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30126",
+        account: "1ys30126b",
+        password: "abc123"
+    },
+    {
+        name: "欧阳晓静",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30127",
+        account: "0yxj30127",
+        password: "abc123"
+    },
+    {
+        name: "潘奕杉",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30128",
+        account: "pys30128",
+        password: "abc123"
+    },
+    {
+        name: "秦明辉",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30129",
+        account: "qmh30129",
+        password: "abc123"
+    },
+    {
+        name: "芮一笑",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30130",
+        account: "ryx30130",
+        password: "abc123"
+    },
+    {
+        name: "邵子晴",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30131",
+        account: "szq30131a",
+        password: "abc123"
+    },
+    {
+        name: "史嘉暄",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30132",
+        account: "sjx30132a",
+        password: "abc123"
+    },
+    {
+        name: "唐颂杰",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30133",
+        account: "tsj30133",
+        password: "abc123"
+    },
+    {
+        name: "唐雨昕",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30134",
+        account: "tyx30134b",
+        password: "abc123"
+    },
+    {
+        name: "唐韵寒",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30135",
+        account: "tyh30135a",
+        password: "abc123"
+    },
+    {
+        name: "王弘羽",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30136",
+        account: "why30136b",
+        password: "abc123"
+    },
+    {
+        name: "王小衣",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30137",
+        account: "wxy30137e",
+        password: "abc123"
+    },
+    {
+        name: "王宇锋",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30138",
+        account: "wyf30138b",
+        password: "abc123"
+    },
+    {
+        name: "魏楚寅",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30139",
+        account: "wcy30139",
+        password: "abc123"
+    },
+    {
+        name: "文佳欣",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30140",
+        account: "wjx30140b",
+        password: "abc123"
+    },
+    {
+        name: "吴与凡",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30141",
+        account: "wyf30141a",
+        password: "abc123"
+    },
+    {
+        name: "徐希蕊",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30142",
+        account: "xxr30142a",
+        password: "abc123"
+    },
+    {
+        name: "杨妍",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30143",
+        account: "yy30143b",
+        password: "abc123"
+    },
+    {
+        name: "殷思雨",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30144",
+        account: "ysy30144a",
+        password: "abc123"
+    },
+    {
+        name: "尤文杰",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30145",
+        account: "vwj30145",
+        password: "abc123"
+    },
+    {
+        name: "余浩森",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30146",
+        account: "vhs30146",
+        password: "abc123"
+    },
+    {
+        name: "张灏",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30147",
+        account: "zh30147b",
+        password: "abc123"
+    },
+    {
+        name: "张锦煊",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30148",
+        account: "zjx30148e",
+        password: "abc123"
+    },
+    {
+        name: "张梓萱01",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30149",
+        account: "zzx30149c",
+        password: "abc123"
+    },
+    {
+        name: "章渝哲",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30150",
+        account: "zyz30150a",
+        password: "abc123"
+    },
+    {
+        name: "赵紫桐",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30151",
+        account: "zzt30151",
+        password: "abc123"
+    },
+    {
+        name: "周傲雪",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30152",
+        account: "zax30152",
+        password: "abc123"
+    },
+    {
+        name: "朱淑雅",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30153",
+        account: "zsy30153b",
+        password: "abc123"
+    },
+    {
+        name: "祝辰睿",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30154",
+        account: "zcr30154",
+        password: "abc123"
+    },
+    {
+        name: "邹宜君",
+        grade: "高一",
+        class: "1班",
+        subjects: "政史地",
+        code: "30155",
+        account: "zyj30155b",
+        password: "abc123"
+    }
+];
+        // ========================================================
+        // 👆 学生数据配置结束 👆
+        // ========================================================
+
+        // 从 localStorage 读取已查阅记录（使用学生姓名作为标识）- 使用 v2 的 key 避免与 v1 冲突
+        let viewedStudents = JSON.parse(localStorage.getItem('viewedStudents_v2') || '[]');
+
+        // 从 localStorage 读取查阅记录（包含家长姓名）- 使用 v2 的 key 避免与 v1 冲突
+        let viewRecords = JSON.parse(localStorage.getItem('viewRecords_v2') || '[]');
+
+        // 当前选中的学生
+        let currentStudent = null;
+
+        // 初始化
+        function init() {
+            renderStudentList();
+            updateStats();
+
+            // 搜索功能
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                renderStudentList(e.target.value);
+            });
+        }
+
+        // 渲染学生列表
+        function renderStudentList(searchTerm = '') {
+            const studentList = document.getElementById('studentList');
+
+            // 过滤学生
+            const filteredStudents = STUDENTS.filter(student =>
+                student.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filteredStudents.length === 0) {
+                studentList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <p>未找到匹配的学生</p>
+                    </div>
+                `;
+                return;
+            }
+
+            studentList.innerHTML = filteredStudents.map((student, index) => {
+                const isViewed = viewedStudents.includes(student.name);
+                return `
+                    <div class="student-item" onclick="handleStudentClick(${index})">
+                        <div class="student-info">
+                            <div>
+                                <div class="student-name">${student.name}</div>
+                                <div class="student-detail">${student.grade} ${student.class} · ${student.subjects}</div>
+                            </div>
+                            ${isViewed ? `
+                                <div class="status-badge status-completed">
+                                    <span class="check-icon">✓</span>
+                                    已查阅
+                                </div>
+                            ` : `
+                                <div class="status-badge status-pending">
+                                    待查阅
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            const total = STUDENTS.length;
+            const completed = viewedStudents.length;
+            const pending = total - completed;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('pendingCount').textContent = pending;
+        }
+
+        // 点击学生
+        function handleStudentClick(studentIndex) {
+            const student = STUDENTS[studentIndex];
+            if (!student) return;
+
+            currentStudent = student;
+
+            // 显示确认弹窗
+            document.getElementById('confirmStudentName').textContent = `${student.name}（${student.grade}${student.class}）`;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // 确认查阅
+        function confirmView() {
+            if (!currentStudent) return;
+
+            // 获取家长姓名
+            const parentNameInput = document.getElementById('parentName');
+            const parentName = parentNameInput.value.trim();
+
+            // 验证家长姓名
+            if (!parentName) {
+                alert('请输入家长姓名！');
+                parentNameInput.focus();
+                return;
+            }
+
+            // 标记为已查阅（使用学生姓名作为唯一标识）
+            if (!viewedStudents.includes(currentStudent.name)) {
+                viewedStudents.push(currentStudent.name);
+                localStorage.setItem('viewedStudents_v2', JSON.stringify(viewedStudents));
+            }
+
+            // 记录查阅信息（学生姓名 + 家长姓名 + 时间）
+            const record = {
+                studentName: currentStudent.name,
+                parentName: parentName,
+                timestamp: new Date().toLocaleString('zh-CN')
+            };
+            viewRecords.push(record);
+            localStorage.setItem('viewRecords_v2', JSON.stringify(viewRecords));
+
+            // 关闭确认弹窗并清空输入框
+            document.getElementById('confirmModal').classList.remove('show');
+            parentNameInput.value = '';
+
+            // 显示信息弹窗
+            showInfoModal();
+
+            // 重新渲染列表
+            renderStudentList();
+            updateStats();
+        }
+
+        // 显示信息弹窗
+        function showInfoModal() {
+            if (!currentStudent) return;
+
+            document.getElementById('infoStudentName').textContent = `${currentStudent.name}（${currentStudent.grade}${currentStudent.class}）`;
+            document.getElementById('infoCode').textContent = currentStudent.code;
+            document.getElementById('infoAccount').textContent = currentStudent.account;
+            document.getElementById('infoPassword').textContent = currentStudent.password;
+            document.getElementById('infoGrade').textContent = currentStudent.grade;
+            document.getElementById('infoClass').textContent = currentStudent.class;
+            document.getElementById('infoSubjects').textContent = currentStudent.subjects;
+
+            document.getElementById('infoModal').classList.add('show');
+        }
+
+        // 关闭确认弹窗
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // 关闭信息弹窗
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.remove('show');
+            currentStudent = null;
+        }
+
+        // 显示查阅记录
+        function showViewRecords() {
+            const recordsContent = document.getElementById('recordsContent');
+
+            if (viewRecords.length === 0) {
+                recordsContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📋</div>
+                        <p>暂无查阅记录</p>
+                    </div>
+                `;
+            } else {
+                // 按时间倒序排列
+                const sortedRecords = [...viewRecords].reverse();
+                recordsContent.innerHTML = sortedRecords.map(record => `
+                    <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="font-weight: 500; color: #333;">
+                            👤 家长：<span style="color: #2196F3;">${record.parentName}</span>
+                        </div>
+                        <div style="font-weight: 500; color: #333; margin-top:5px;">
+                            📚 学生：<span style="color: #4CAF50;">${record.studentName}</span>
+                        </div>
+                        <div style="color: #999; font-size: 12px; margin-top:5px;">
+                            🕒 查阅时间：${record.timestamp}
+                        </div>
+                    </div>
+                `).join('');
+
+                // 添加导出按钮
+                recordsContent.innerHTML += `
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button onclick="exportRecords()" style="background: #4CAF50; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                            📥 导出查阅记录
+                        </button>
+                    </div>
+                `;
+            }
+
+            document.getElementById('recordsModal').classList.add('show');
+        }
+
+        // 关闭查阅记录弹窗
+        function closeRecordsModal() {
+            document.getElementById('recordsModal').classList.remove('show');
+        }
+
+        // 导出查阅记录
+        function exportRecords() {
+            if (viewRecords.length === 0) {
+                alert('没有可导出的记录！');
+                return;
+            }
+
+            const csvContent = '\uFEFF' + [
+                ['家长姓名', '学生姓名', '查阅时间'],
+                ...viewRecords.map(r => [r.parentName, r.studentName, r.timestamp])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `查阅记录_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.csv`;
+            link.click();
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('infoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInfoModal();
+            }
+        });
+
+        document.getElementById('recordsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRecordsModal();
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
