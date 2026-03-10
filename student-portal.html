@@ -328,12 +328,18 @@
         </div>
 
         <div class="search-box">
-            <input 
-                type="text" 
-                class="search-input" 
+            <input
+                type="text"
+                class="search-input"
                 id="searchInput"
                 placeholder="🔍 输入学生姓名搜索..."
             >
+        </div>
+
+        <div style="text-align: right; margin-bottom: 15px;">
+            <button onclick="showViewRecords()" style="background: #fff; border: 1px solid #4CAF50; color: #4CAF50; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                📋 查阅记录
+            </button>
         </div>
 
         <div class="student-list" id="studentList">
@@ -355,10 +361,39 @@
                 <p style="text-align: center; color: #666; margin-bottom: 15px;">
                     您确定要查看此学生的账号信息吗？
                 </p>
+                <div style="margin: 20px 0;">
+                    <label for="parentName" style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">
+                        请输入家长姓名 <span style="color: red;">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="parentName" 
+                        class="search-input" 
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;"
+                        placeholder="请输入您的姓名"
+                    >
+                </div>
+                <p style="text-align: center; color: #999; font-size: 13px; margin-top: 10px;">
+                    （您的姓名将被记录，仅供老师查阅确认）
+                </p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal()">取消</button>
                 <button class="btn btn-primary" onclick="confirmView()">确认查阅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查阅记录弹窗 -->
+    <div class="modal" id="recordsModal">
+        <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>📋 查阅记录</h3>
+            </div>
+            <div class="modal-body" id="recordsContent">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeRecordsModal()">关闭</button>
             </div>
         </div>
     </div>
@@ -965,6 +1000,9 @@
         // 从 localStorage 读取已查阅记录
         let viewedStudents = JSON.parse(localStorage.getItem('viewedStudents') || '[]');
 
+        // 从 localStorage 读取查阅记录（包含家长姓名）
+        let viewRecords = JSON.parse(localStorage.getItem('viewRecords') || '[]');
+
         // 当前选中的学生
         let currentStudent = null;
 
@@ -1050,14 +1088,35 @@
         function confirmView() {
             if (!currentStudent) return;
 
+            // 获取家长姓名
+            const parentNameInput = document.getElementById('parentName');
+            const parentName = parentNameInput.value.trim();
+
+            // 验证家长姓名
+            if (!parentName) {
+                alert('请输入家长姓名！');
+                parentNameInput.focus();
+                return;
+            }
+
             // 标记为已查阅（使用学生姓名作为唯一标识）
             if (!viewedStudents.includes(currentStudent.name)) {
                 viewedStudents.push(currentStudent.name);
                 localStorage.setItem('viewedStudents', JSON.stringify(viewedStudents));
             }
 
+            // 记录查阅信息（学生姓名 + 家长姓名 + 时间）
+            const record = {
+                studentName: currentStudent.name,
+                parentName: parentName,
+                timestamp: new Date().toLocaleString('zh-CN')
+            };
+            viewRecords.push(record);
+            localStorage.setItem('viewRecords', JSON.stringify(viewRecords));
+
             // 关闭确认弹窗（不清除 currentStudent）
             document.getElementById('confirmModal').classList.remove('show');
+            document.getElementById('parentName').value = ''; // 清空输入框
 
             // 显示信息弹窗
             showInfoModal();
@@ -1093,6 +1152,71 @@
             currentStudent = null;
         }
 
+        // 显示查阅记录
+        function showViewRecords() {
+            const recordsContent = document.getElementById('recordsContent');
+
+            if (viewRecords.length === 0) {
+                recordsContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📋</div>
+                        <p>暂无查阅记录</p>
+                    </div>
+                `;
+            } else {
+                // 按时间倒序排列
+                const sortedRecords = [...viewRecords].reverse();
+                recordsContent.innerHTML = sortedRecords.map(record => `
+                    <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="font-weight: 500; color: #333;">
+                            👤 家长：<span style="color: #2196F3;">${record.parentName}</span>
+                        </div>
+                        <div style="font-weight: 500; color: #333; margin-top: 5px;">
+                            📚 学生：<span style="color: #4CAF50;">${record.studentName}</span>
+                        </div>
+                        <div style="color: #999; font-size: 12px; margin-top: 5px;">
+                            🕒 查阅时间：${record.timestamp}
+                        </div>
+                    </div>
+                `).join('');
+
+                // 添加导出按钮
+                recordsContent.innerHTML += `
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button onclick="exportRecords()" style="background: #4CAF50; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                            📥 导出查阅记录
+                        </button>
+                    </div>
+                `;
+            }
+
+            document.getElementById('recordsModal').classList.add('show');
+        }
+
+        // 关闭查阅记录弹窗
+        function closeRecordsModal() {
+            document.getElementById('recordsModal').classList.remove('show');
+        }
+
+        // 导出查阅记录
+        function exportRecords() {
+            if (viewRecords.length === 0) {
+                alert('没有可导出的记录！');
+                return;
+            }
+
+            const csvContent = '\uFEFF' + [
+                ['家长姓名', '学生姓名', '查阅时间'],
+                ...viewRecords.map(r => [r.parentName, r.studentName, r.timestamp])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `查阅记录_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.csv`;
+            link.click();
+        }
+
         // 点击弹窗外部关闭
         document.getElementById('confirmModal').addEventListener('click', function(e) {
             if (e.target === this) {
@@ -1103,6 +1227,14 @@
         document.getElementById('infoModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeInfoModal();
+            }
+        });
+
+        document.getElementById('recordsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRecordsModal();
+            }
+        });
             }
         });
 
