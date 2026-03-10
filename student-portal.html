@@ -1056,8 +1056,8 @@
                 localStorage.setItem('viewedStudents', JSON.stringify(viewedStudents));
             }
 
-            // 关闭确认弹窗
-            closeModal();
+            // 关闭确认弹窗（不清除 currentStudent）
+            document.getElementById('confirmModal').classList.remove('show');
 
             // 显示信息弹窗
             showInfoModal();
@@ -1085,7 +1085,6 @@
         // 关闭确认弹窗
         function closeModal() {
             document.getElementById('confirmModal').classList.remove('show');
-            currentStudent = null;
         }
 
         // 关闭信息弹窗
