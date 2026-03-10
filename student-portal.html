@@ -982,9 +982,9 @@
         // 渲染学生列表
         function renderStudentList(searchTerm = '') {
             const studentList = document.getElementById('studentList');
-            
+
             // 过滤学生
-            const filteredStudents = STUDENTS.filter(student => 
+            const filteredStudents = STUDENTS.filter(student =>
                 student.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
@@ -998,10 +998,10 @@
                 return;
             }
 
-            studentList.innerHTML = filteredStudents.map(student => {
-                const isViewed = viewedStudents.includes(student.id);
+            studentList.innerHTML = filteredStudents.map((student, index) => {
+                const isViewed = viewedStudents.includes(student.name);
                 return `
-                    <div class="student-item" onclick="handleStudentClick(${student.id})">
+                    <div class="student-item" onclick="handleStudentClick(${index})">
                         <div class="student-info">
                             <div>
                                 <div class="student-name">${student.name}</div>
@@ -1035,8 +1035,8 @@
         }
 
         // 点击学生
-        function handleStudentClick(studentId) {
-            const student = STUDENTS.find(s => s.id === studentId);
+        function handleStudentClick(studentIndex) {
+            const student = STUDENTS[studentIndex];
             if (!student) return;
 
             currentStudent = student;
@@ -1050,9 +1050,9 @@
         function confirmView() {
             if (!currentStudent) return;
 
-            // 标记为已查阅
-            if (!viewedStudents.includes(currentStudent.id)) {
-                viewedStudents.push(currentStudent.id);
+            // 标记为已查阅（使用学生姓名作为唯一标识）
+            if (!viewedStudents.includes(currentStudent.name)) {
+                viewedStudents.push(currentStudent.name);
                 localStorage.setItem('viewedStudents', JSON.stringify(viewedStudents));
             }
 
