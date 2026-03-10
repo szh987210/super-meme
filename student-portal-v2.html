@@ -423,6 +423,40 @@
         </div>
     </div>
 
+    <!-- 密码验证弹窗 -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 身份验证</h3>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                    查阅记录仅供老师查看，请输入访问密码
+                </p>
+                <div style="margin: 20px 0;">
+                    <label for="accessPassword" style="display: block; margin-bottom: 8px; color: #333; font-weight: 500;">
+                        访问密码
+                    </label>
+                    <input
+                        type="password"
+                        id="accessPassword"
+                        class="search-input"
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;"
+                        placeholder="请输入密码"
+                        maxlength="6"
+                    >
+                </div>
+                <p id="passwordError" style="text-align: center; color: #f44336; font-size: 13px; margin-top: 10px; display: none;">
+                    密码错误，请重新输入
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePasswordModal()">取消</button>
+                <button class="btn btn-primary" onclick="verifyPassword()">确认</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 查阅记录弹窗 -->
     <div class="modal" id="recordsModal">
         <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
@@ -1099,6 +1133,30 @@
 
         // 显示查阅记录
         function showViewRecords() {
+            // 显示密码验证弹窗
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('accessPassword').value = '';
+            document.getElementById('passwordModal').classList.add('show');
+        }
+
+        // 验证密码
+        function verifyPassword() {
+            const password = document.getElementById('accessPassword').value.trim();
+            
+            if (password === '123456') {
+                // 密码正确，关闭密码弹窗，显示查阅记录
+                document.getElementById('passwordModal').classList.remove('show');
+                showRecordsContent();
+            } else {
+                // 密码错误，显示错误提示
+                const errorEl = document.getElementById('passwordError');
+                errorEl.style.display = 'block';
+                document.getElementById('accessPassword').focus();
+            }
+        }
+
+        // 显示查阅记录内容
+        function showRecordsContent() {
             const recordsContent = document.getElementById('recordsContent');
 
             if (viewRecords.length === 0) {
@@ -1136,6 +1194,11 @@
             }
 
             document.getElementById('recordsModal').classList.add('show');
+        }
+
+        // 关闭密码弹窗
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('show');
         }
 
         // 关闭查阅记录弹窗
@@ -1178,6 +1241,19 @@
         document.getElementById('recordsModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeRecordsModal();
+            }
+        });
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePasswordModal();
+            }
+        });
+
+        // 密码输入框按回车键提交
+        document.getElementById('accessPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyPassword();
             }
         });
 
